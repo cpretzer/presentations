@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"web-svc","namespace":"emojivoto"},"spec":{"ports":[{"name":"http","port":80,"targetPort":8080}],"selector":{"app":"web-svc"},"type":"LoadBalancer"}}
+  creationTimestamp: "2019-12-09T07:01:03Z"
+  name: web-svc-oc
+  namespace: emojivoto
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: web-svc-oc
+  sessionAffinity: None
+  type: LoadBalancer

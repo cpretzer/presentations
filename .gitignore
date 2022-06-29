@@ -1,0 +1,6 @@
+.idea
+*.key
+*.crt
+*.cert
+*.csr
+*.iml

@@ -1,0 +1,15 @@
+existing emojivoto
+existing ingress
+install 2.6 or edge
+deploy tracing.yml
+? deploy nginx-ingress-controller configmap
+- This was not necessary because the ingress controller deployed by helm included the relevant `data` sections
+Edit cm/nginx-ingress-controller because the --configmap argument had a value of ev-nginx-ingress-controller and
+the configmap was named nginx-ingress-controller
+Add annotation to emoji namespace
+    config.linkerd.io/trace-collector: "oc-collector.tracing:55678"
+Add env to web, emoji, and voting deployments
+        - name: OC_AGENT_HOST
+          value: "oc-collector.tracing:55678"
+Update all deployments to use `v8-tracing` tracing
+* Make sure that the open tracing components are injected with linkerd

@@ -1,0 +1,11 @@
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: authors-split
+spec:
+  service: authors
+  backends:
+  - service: authors
+    weight: 500m
+  - service: authors-clone
+    weight: 500m

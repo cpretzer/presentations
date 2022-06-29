@@ -1,0 +1,153 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emoji-svc-oc
+  namespace: emojivoto
+spec:
+  selector:
+    app: emoji-svc-oc
+  clusterIP: None
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: emoji-oc
+  namespace: emojivoto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emoji-svc-oc
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: emoji-svc-oc
+    spec:
+      serviceAccountName: emoji
+      containers:
+      - env:
+        - name: GRPC_PORT
+          value: "8080"
+        - name: OC_AGENT_HOST
+          value: "oc-collector.tracing:55678"
+        image: buoyantio/emojivoto-emoji-svc:v8-tracing
+        name: emoji-svc
+        ports:
+        - containerPort: 8080
+          name: grpc
+        resources:
+          requests:
+            cpu: 100m
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: voting-oc
+  namespace: emojivoto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting-svc-oc
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: voting-svc-oc
+    spec:
+      serviceAccountName: voting
+      containers:
+      - env:
+        - name: GRPC_PORT
+          value: "8080"
+        - name: OC_AGENT_HOST
+          value: "oc-collector.tracing:55678"
+        image: buoyantio/emojivoto-voting-svc:v8-tracing
+        name: voting-svc-oc
+        ports:
+        - containerPort: 8080
+          name: grpc
+        resources:
+          requests:
+            cpu: 100m
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voting-svc-oc
+  namespace: emojivoto
+spec:
+  selector:
+    app: voting-svc-oc
+  clusterIP: None
+  ports:
+  - name: grpc
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: web-oc
+  namespace: emojivoto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-svc-oc
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web-svc-oc
+    spec:
+      serviceAccountName: web
+      containers:
+      - env:
+        - name: WEB_PORT
+          value: "80"
+        - name: OC_AGENT_HOST
+          value: "oc-collector.tracing:55678"
+        - name: EMOJISVC_HOST
+          value: emoji-svc-oc.emojivoto:8080
+        - name: VOTINGSVC_HOST
+          value: voting-svc-oc.emojivoto:8080
+        - name: INDEX_BUNDLE
+          value: dist/index_bundle.js
+        image: buoyantio/emojivoto-web:v8-tracing
+        name: web-svc-oc
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc-oc
+  namespace: emojivoto
+spec:
+  type: LoadBalancer
+  selector:
+    app: web-svc-oc
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+---

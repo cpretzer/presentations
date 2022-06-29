@@ -1,0 +1,35 @@
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: web-split
+spec:
+  service: web-svc
+  backends:
+  - service: web-svc
+    weight: 0m
+  - service: web-svc-oc
+    weight: 1000m
+---
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: voting-split
+spec:
+  service: voting-svc
+  backends:
+  - service: voting-svc
+    weight: 0m
+  - service: voting-svc-oc
+    weight: 1000m
+---
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: emoji-split
+spec:
+  service: emoji-svc
+  backends:
+  - service: emoji-svc
+    weight: 0m
+  - service: emoji-svc-oc
+    weight: 1000m

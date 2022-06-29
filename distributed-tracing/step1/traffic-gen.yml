@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slow-cooker
+  namespace: demo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slow-cooker
+  template:
+    metadata:
+      labels:
+        app: slow-cooker
+    spec:
+      containers:
+        - name: slow-cooker
+          image: buoyantio/slow_cooker:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          args:
+            - "-qps"
+            - "100"
+            - "-concurrency"
+            - "10"
+            - "http://nginx-ingress.demo-app"
+---
